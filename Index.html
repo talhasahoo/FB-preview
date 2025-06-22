@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FB OG Preview Generator</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; background: #f9f9f9; }
+    input, button, textarea {
+      display: block; width: 100%; margin: 10px 0; padding: 10px;
+    }
+    button { background: #28a745; color: #fff; border: none; }
+    textarea { height: 250px; font-family: monospace; }
+  </style>
+</head>
+<body>
+  <h2>🔗 FB OG Image Preview Generator</h2>
+  <input id="img" placeholder="Image URL (e.g. https://i.imgur.com/...)" />
+  <input id="link" placeholder="Target Link (e.g. https://youtube.com/...)" />
+  <button onclick="generate()">Generate Preview HTML</button>
+  <textarea id="htmlBox" readonly style="display:none;"></textarea>
+
+  <script>
+    async function generate() {
+      const img = document.getElementById("img").value;
+      const link = document.getElementById("link").value;
+      if (!img || !link) return alert("Enter both fields");
+
+      const res = await fetch("/.netlify/functions/create", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ image: img, url: link })
+      });
+
+      const text = await res.text();
+      const box = document.getElementById("htmlBox");
+      box.style.display = "block";
+      box.value = text;
+    }
+  </script>
+</body>
+</html>
